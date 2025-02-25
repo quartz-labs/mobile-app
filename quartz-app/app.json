@@ -5,11 +5,12 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "quartzapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.quartzlabs.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,6 +23,10 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "extra": {
+      "privyAppId": "cm7jxbj7j034s959mivyrhn59",
+      "privyClientId": "client-WY5h9C4c3BCprz1EPvGdZ8xbh2DK8NJFBVTYiAwkvTpj7"
+    },
     "plugins": [
       "expo-router",
       [
@@ -33,7 +38,8 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
