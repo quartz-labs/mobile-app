@@ -2,9 +2,7 @@ import { Tabs } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Platform, View } from 'react-native';
 
-import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useEmbeddedSolanaWallet, usePrivy } from '@privy-io/expo';
@@ -14,6 +12,7 @@ import { useAccountStatusQuery } from '@/utils/queries/protocol.queries';
 import { PublicKey } from '@solana/web3.js';
 import { useStore } from '@/utils/store';
 import { AccountStatus } from '@/types/enums/AccountStatus.enum';
+import TabBarBackground from '@/components/ui/TabBarBackground';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -56,7 +55,6 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {

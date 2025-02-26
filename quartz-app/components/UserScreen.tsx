@@ -12,10 +12,9 @@ import { useAppState } from "@/context/AppStateContext";
 
 export const UserScreen = () => {
   const [password, setPassword] = useState("");
-  const [chainId, setChainId] = useState("1");
   const [signedMessages, setSignedMessages] = useState<string[]>([]);
 
-  const { state, clearState } = useAppState();
+  const { clearState } = useAppState();
 
   const { logout, user } = usePrivy();
   const wallet = useEmbeddedSolanaWallet();
@@ -171,16 +170,6 @@ export const UserScreen = () => {
                 title="Send Transaction"
                 onPress={() => signAndSendTransaction()}
               />
-            )}
-
-            {wallet.status === "connected" && (
-              <>
-                <TextInput
-                  value={chainId}
-                  onChangeText={setChainId}
-                  placeholder="Chain Id"
-                />
-              </>
             )}
 
             {wallet.status === "needs-recovery" && (
