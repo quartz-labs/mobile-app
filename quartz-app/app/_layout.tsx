@@ -6,11 +6,12 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { PrivyElements, PrivyProvider } from '@privy-io/expo';
-import {Inter_400Regular, Inter_500Medium, Inter_600SemiBold} from '@expo-google-fonts/inter';
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import Constants from 'expo-constants';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AppStateProvider } from '@/context/AppStateContext';
+import { ReactQueryProvider } from '@/context/react-query-provider';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -43,27 +44,29 @@ export default function RootLayout() {
   const privyClientId = Constants.expoConfig?.extra?.privyClientId || '';
 
   return (
-    <AppStateProvider>
-      <PrivyProvider
-        appId={privyAppId}
-        clientId={privyClientId}
-        config={{
-          embedded: { 
-            solana: { 
-              createOnLogin: 'users-without-wallets', // defaults to 'off'
-            }, 
-          },
-        }}  
-      >
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <PrivyElements config={{appearance: {colorScheme: colorScheme!}}} />
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </PrivyProvider>
-    </AppStateProvider>
+    <ReactQueryProvider>
+      <AppStateProvider>
+        <PrivyProvider
+          appId={privyAppId}
+          clientId={privyClientId}
+          config={{
+            embedded: {
+              solana: {
+                createOnLogin: 'users-without-wallets', // defaults to 'off'
+              },
+            },
+          }}
+        >
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <PrivyElements config={{ appearance: { colorScheme: colorScheme! } }} />
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </PrivyProvider>
+      </AppStateProvider>
+    </ReactQueryProvider>
   );
 }
