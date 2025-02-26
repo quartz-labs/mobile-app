@@ -1,29 +1,37 @@
-import { Button, Linking, Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
 import {
-  useLoginWithOAuth,
-  useLogin,
   usePrivy,
   getUserEmbeddedSolanaWallet,
   useEmbeddedSolanaWallet,
 } from "@privy-io/expo";
-import Constants from "expo-constants";
 import { useState } from "react";
-import * as Application from "expo-application";
 import { useAppState } from "@/context/AppStateContext";
 import React from "react";
+import { buildEndpointURL, deserializeTransaction, fetchAndParse, signAndSendTransaction } from "@/utils/helpers";
+import { captureError } from "@/utils/errors";
+import { TxStatus } from "@/context/tx-status-provider";
+import { useTxStatus } from "@/context/tx-status-provider";
+import { useRefetchAccountStatus } from "@/utils/hooks";
+import { useError } from "@/context/error-provider";
+import { PublicKey } from "@solana/web3.js";
+import { useStore } from "@/utils/store";
+import config from "@/config/config";
 
 export default function CreateQuartzAccount() {
   const [error, setError] = useState("");
 
   const { state, updateUserState, clearState } = useAppState();
 
-  const { login } = useLogin();
-  const oauth = useLoginWithOAuth({
-    onError: (err) => {
-      console.log(err);
-      setError(JSON.stringify(err.message));
-    },
-  });
+  const { 
+    setIsInitialized,
+  } = useStore();
+
+
+  const { showTxStatus } = useTxStatus();
+  const [attemptFailed, setAttemptFailed] = useState(false);
+  const [awaitingSign, setAwaitingSign] = useState(false);
+  const refetchAccountStatus = useRefetchAccountStatus();
+  const { showError } = useError();
 
   const { logout, user } = usePrivy();
 
@@ -33,20 +41,40 @@ export default function CreateQuartzAccount() {
   };
 
   const wallet = useEmbeddedSolanaWallet();
-
   const account = getUserEmbeddedSolanaWallet(user);
 
-  const handleCreateQuartzAccount = () => {
-    // TODO: Implement account creation logic
+  const handleCreateAccount = async () => {
+    if (!wallet || awaitingSign) return;
 
-    //Update the state so that Quartz has a user id
-    updateUserState({
-      hasQuartzAccount: true
-    });
+    setAttemptFailed(false);
+    setAwaitingSign(true);
+    refetchAccountStatus();
+    try {
+      const walletAddress = wallet?.wallets?.[0]?.address;
+      console.log("walletAddress in create account", walletAddress);
+      const endpoint = buildEndpointURL(`${config.API_URL}/program/build-tx/init-account`, {
+        address: walletAddress
+      });
+      console.log("endpoint in create account", endpoint);
+      const response = await fetchAndParse(endpoint);
+      console.log("response in create account", response);
+      const transaction = deserializeTransaction(response.transaction);
+      console.log("transaction in create account", transaction);
+      const signature = await signAndSendTransaction(transaction, wallet, showTxStatus);
+      console.log("signature in create account", signature);
 
-    //TODO: Open the Tablayout
-
-    console.log("Creating Quartz account for user:", user?.id);
+      setAwaitingSign(false);
+      if (signature) {
+        refetchAccountStatus(signature);
+      }
+    } catch (error) {
+      //if (error instanceof WalletSignTransactionError) showTxStatus({ status: TxStatus.SIGN_REJECTED });
+      //else {
+        showTxStatus({ status: TxStatus.NONE });
+        captureError(showError, "Failed to create account", "/Onboarding.tsx", error, wallet?.wallets?.[0]?.address ? new PublicKey(wallet?.wallets?.[0]?.address) : null);
+      //}
+      setAwaitingSign(false);
+    }
   };
 
   //if continueLogin is true, then we should check if the user has a Quartz account
@@ -68,10 +96,10 @@ export default function CreateQuartzAccount() {
           <Text style={{ fontSize: 14, marginBottom: 20 }}>
             {account?.address || "No wallet address found"}
           </Text>
-          
+
           <Button
             title="Create Quartz Account"
-            onPress={handleCreateQuartzAccount}
+            onPress={handleCreateAccount}
           />
         </>
       ) : (
