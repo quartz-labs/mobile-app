@@ -7,25 +7,8 @@ import {
   useEmbeddedSolanaWallet,
   PrivyEmbeddedSolanaWalletProvider,
 } from "@privy-io/expo";
-import { PrivyUser } from "@privy-io/public-api";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { useAppState } from "@/context/AppStateContext";
-
-const toMainIdentifier = (x: PrivyUser["linked_accounts"][number]) => {
-  if (x.type === "phone") {
-    return x.phoneNumber;
-  }
-  if (x.type === "email" || x.type === "wallet") {
-    return x.address;
-  }
-
-
-  if (x.type === "custom_auth") {
-    return x.custom_user_id;
-  }
-
-  return x.type;
-};
 
 export const UserScreen = () => {
   const [password, setPassword] = useState("");
@@ -150,30 +133,6 @@ export const UserScreen = () => {
             gap: 10,
           }}
         >
-          <View>
-            <Text style={{ fontWeight: "bold" }}>User ID</Text>
-            <Text>{user.id}</Text>
-          </View>
-
-          <View>
-            <Text style={{ fontWeight: "bold" }}>Linked accounts</Text>
-            {user?.linked_accounts.length ? (
-              <View style={{ display: "flex", flexDirection: "column" }}>
-                {user?.linked_accounts?.map((m, index) => (
-                  <Text
-                    key={`${m.type}-${toMainIdentifier(m)}-${index}`}
-                    style={{
-                      color: "rgba(0,0,0,0.5)",
-                      fontSize: 12,
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {m.type}: {toMainIdentifier(m)}
-                  </Text>
-                ))}
-              </View>
-            ) : null}
-          </View>
 
           <View>
             {account?.address && (
@@ -233,7 +192,6 @@ export const UserScreen = () => {
           </View>
 
           <Text>Welcome to Your Quartz Account</Text>
-          <Text>User ID: {state.user.userId}</Text>
 
           <View style={{ display: "flex", flexDirection: "column" }}>
             {signedMessages.map((m) => (
