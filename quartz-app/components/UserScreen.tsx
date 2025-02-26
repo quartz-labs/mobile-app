@@ -9,6 +9,7 @@ import {
 } from "@privy-io/expo";
 import { PrivyUser } from "@privy-io/public-api";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { useAppState } from "@/context/AppStateContext";
 
 const toMainIdentifier = (x: PrivyUser["linked_accounts"][number]) => {
   if (x.type === "phone") {
@@ -30,6 +31,8 @@ export const UserScreen = () => {
   const [password, setPassword] = useState("");
   const [chainId, setChainId] = useState("1");
   const [signedMessages, setSignedMessages] = useState<string[]>([]);
+
+  const { state, clearState } = useAppState();
 
   const { logout, user } = usePrivy();
   const wallet = useEmbeddedSolanaWallet();
@@ -82,6 +85,10 @@ export const UserScreen = () => {
 
   }, [provider]);
 
+  const handleLogout = () => {
+    clearState();
+    logout();
+  };
 
   const signAndSendTransaction = useCallback(async () => {
     if (!provider) {
@@ -225,6 +232,9 @@ export const UserScreen = () => {
             )}
           </View>
 
+          <Text>Welcome to Your Quartz Account</Text>
+          <Text>User ID: {state.user.userId}</Text>
+
           <View style={{ display: "flex", flexDirection: "column" }}>
             {signedMessages.map((m) => (
               <React.Fragment key={m}>
@@ -247,7 +257,7 @@ export const UserScreen = () => {
               </React.Fragment>
             ))}
           </View>
-          <Button title="Logout" onPress={logout} />
+          <Button title="Logout" onPress={handleLogout} />
         </View>
       </ScrollView>
     </View>

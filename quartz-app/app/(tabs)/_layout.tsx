@@ -9,15 +9,24 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { usePrivy } from '@privy-io/expo';
 import LoginScreen from '@/components/LoginScreen';
+import { useAppState } from '@/context/AppStateContext';
+import CreateQuartzAccount from '@/components/CreateQuartzAccount';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   const { user } = usePrivy();
 
+  const { state } = useAppState();
+
   if (!user) {
     console.log('user in tabs layout is not logged in');
     return <LoginScreen />;
+  }
+
+  if (!state.user.hasQuartzAccount) {
+    console.log('user in tabs layout has no Quartz account');
+    return <CreateQuartzAccount />;
   }
 
   return (
@@ -45,7 +54,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Explore',
+          title: 'Card',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />

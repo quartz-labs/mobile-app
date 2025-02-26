@@ -10,6 +10,7 @@ import {Inter_400Regular, Inter_500Medium, Inter_600SemiBold} from '@expo-google
 import Constants from 'expo-constants';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { AppStateProvider } from '@/context/AppStateContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -42,25 +43,27 @@ export default function RootLayout() {
   const privyClientId = Constants.expoConfig?.extra?.privyClientId || '';
 
   return (
-    <PrivyProvider
-      appId={privyAppId}
-      clientId={privyClientId}
-      config={{
-        embedded: { 
-          solana: { 
-            createOnLogin: 'users-without-wallets', // defaults to 'off'
-          }, 
-        },
-      }}  
-    >
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <PrivyElements config={{appearance: {colorScheme: colorScheme!}}} />
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </PrivyProvider>
+    <AppStateProvider>
+      <PrivyProvider
+        appId={privyAppId}
+        clientId={privyClientId}
+        config={{
+          embedded: { 
+            solana: { 
+              createOnLogin: 'users-without-wallets', // defaults to 'off'
+            }, 
+          },
+        }}  
+      >
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <PrivyElements config={{appearance: {colorScheme: colorScheme!}}} />
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </PrivyProvider>
+    </AppStateProvider>
   );
 }

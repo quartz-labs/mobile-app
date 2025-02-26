@@ -1,21 +1,19 @@
 import { Button, Linking, Text, View } from "react-native";
 import {
-  useLoginWithOAuth,
   useLogin,
 } from "@privy-io/expo";
 import Constants from "expo-constants";
 import { useState } from "react";
 import * as Application from "expo-application";
+import { useAppState } from "@/context/AppStateContext";
 
 export default function LoginScreen() {
   const [error, setError] = useState("");
+
+  const { updateUserState } = useAppState();
+
   const { login } = useLogin();
-  const oauth = useLoginWithOAuth({
-    onError: (err) => {
-      console.log(err);
-      setError(JSON.stringify(err.message));
-    },
-  });
+
   return (
     <View
       style={{
@@ -73,6 +71,14 @@ export default function LoginScreen() {
         onPress={() => {
           login({ loginMethods: ["email"] })
             .then((session) => {
+              //TODO: Open the Continue Login screen  (checks if the user already has a Quartz account)
+              //set the user state to logged in
+              updateUserState({
+                isLoggedIn: true,
+                userId: session.user.id,
+                hasQuartzAccount: false,
+              });
+
               console.log("User logged in", session.user);
             })
             .catch((err) => {
