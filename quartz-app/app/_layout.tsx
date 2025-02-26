@@ -12,6 +12,8 @@ import Constants from 'expo-constants';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AppStateProvider } from '@/context/AppStateContext';
 import { ReactQueryProvider } from '@/context/react-query-provider';
+import { ErrorProvider } from '@/context/error-provider';
+import { TxStatusProvider } from '@/context/tx-status-provider';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -46,6 +48,7 @@ export default function RootLayout() {
   return (
     <ReactQueryProvider>
       <AppStateProvider>
+          <TxStatusProvider>
         <PrivyProvider
           appId={privyAppId}
           clientId={privyClientId}
@@ -66,6 +69,7 @@ export default function RootLayout() {
             <StatusBar style="auto" />
           </ThemeProvider>
         </PrivyProvider>
+          </TxStatusProvider>
       </AppStateProvider>
     </ReactQueryProvider>
   );
