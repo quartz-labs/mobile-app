@@ -46,31 +46,33 @@ export default function RootLayout() {
   const privyClientId = Constants.expoConfig?.extra?.privyClientId || '';
 
   return (
-    <ReactQueryProvider>
-      <AppStateProvider>
+    <ErrorProvider>
+      <ReactQueryProvider>
+        <AppStateProvider>
           <TxStatusProvider>
-        <PrivyProvider
-          appId={privyAppId}
-          clientId={privyClientId}
-          config={{
-            embedded: {
-              solana: {
-                createOnLogin: 'users-without-wallets', // defaults to 'off'
-              },
-            },
-          }}
-        >
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <PrivyElements config={{ appearance: { colorScheme: colorScheme! } }} />
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </PrivyProvider>
+            <PrivyProvider
+              appId={privyAppId}
+              clientId={privyClientId}
+              config={{
+                embedded: {
+                  solana: {
+                    createOnLogin: 'users-without-wallets', // defaults to 'off'
+                  },
+                },
+              }}
+            >
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <PrivyElements config={{ appearance: { colorScheme: colorScheme! } }} />
+                <StatusBar style="auto" />
+              </ThemeProvider>
+            </PrivyProvider>
           </TxStatusProvider>
-      </AppStateProvider>
-    </ReactQueryProvider>
+        </AppStateProvider>
+      </ReactQueryProvider>
+    </ErrorProvider>
   );
 }
