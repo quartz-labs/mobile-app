@@ -20,6 +20,7 @@
     "@expo/vector-icons": "^14.0.2",
     "@privy-io/expo": "^0.48.0",
     "@privy-io/expo-native-extensions": "^0.0.3",
+    "@quartz-labs/sdk": "^0.9.6",
     "@react-native-async-storage/async-storage": "^2.1.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
@@ -46,6 +47,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.76.7",
+    "react-native-config": "^1.5.5",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-get-random-values": "^1.11.0",
     "react-native-reanimated": "~3.16.1",
@@ -65,5 +67,6 @@
     "react-test-renderer": "18.3.1",
     "typescript": "^5.3.3"
   },
-  "private": true
+  "private": true,
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
