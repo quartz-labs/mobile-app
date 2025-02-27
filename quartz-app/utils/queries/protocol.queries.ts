@@ -114,7 +114,7 @@ export const useDepositLimitsQuery = (address: PublicKey | null) => {
 
     const query = createQuery<Record<MarketIndex, number>>({
         queryKey: ["user", "deposit-limits", address?.toBase58() ?? ""],
-        url: "/api/deposit-limit",
+        url: `${config.API_URL}/program/data/deposit-limits`,
         params: address ? { 
             address: address.toBase58()
         } : undefined,
@@ -140,7 +140,7 @@ export const useSpendLimitQuery = (address: PublicKey | null) => {
         timeframe: number;
     }>({
         queryKey: ["user", "spend-limits", address?.toBase58() ?? ""],
-        url: "/api/get-spend-limits",
+        url: `${config.API_URL}/program/data/spend-limit`,
         params: address ? { 
             address: address.toBase58(),
         } : undefined,

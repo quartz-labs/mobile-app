@@ -25,7 +25,7 @@ export const useQuartzCardUserQuery = (publicKey: PublicKey | null) => {
     return query();
 };
 
-export const useProviderCardUserQuery = (cardUserId: string | null, refetch: boolean) => {
+export const useProviderCardUserQuery = (cardUserId: string | null, refetch: boolean = false) => {
     const { setProviderCardUser } = useStore();
 
     const query = createQuery<ProviderCardUser>({

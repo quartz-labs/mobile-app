@@ -1,7 +1,10 @@
 import config from "@/config/config";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
-
+import { useStore } from "./store";
+import { useEmbeddedSolanaWallet, PrivyEmbeddedSolanaWalletProvider, PrivyEmbeddedWalletErrorCode, EmbeddedProviderError } from "@privy-io/expo";
+import { TandCsNeeded } from "@/types/enums/AuthLevel.enum";
+import { fetchAndParse } from "./helpers";
 export function useRefetchAccountStatus() {
     const queryClient = useQueryClient();
 
@@ -15,4 +18,79 @@ export function useRefetchAccountStatus() {
 
         queryClient.invalidateQueries({ queryKey: ["account-status"], refetchType: "all" });
     }, [queryClient]);
+}
+
+export async function useLoginCardUser() {
+    const { setJwtToken, setIsSigningLoginMessage, quartzCardUser } = useStore();
+    const wallet = useEmbeddedSolanaWallet();
+
+    if (!wallet.getProvider) {
+        throw new Error("Privy wallet provider is not available");
+    }
+    const provider = await wallet.getProvider();
+
+    const walletAddress = wallet?.wallets?.[0]?.publicKey;
+
+    const signMessage = async (provider: PrivyEmbeddedSolanaWalletProvider, message: string) => {
+        if (!provider) throw new Error("No provider found");
+
+        const signatureBytes = await provider.request({
+            method: "signMessage",
+            params: {
+                message: message
+            }
+        });
+        return signatureBytes.signature;
+    }
+  
+    return useMutation({
+      mutationKey: ['login-card-user', walletAddress],
+      mutationFn: async (acceptTandcsParam?: TandCsNeeded) => {
+        if (!wallet) throw new Error("Wallet not found");
+
+        const message = [
+            "Sign this message to authenticate ownership. This signature will not trigger any blockchain transaction or cost any gas fees.\n",
+            `Wallet address: ${walletAddress}`,
+            `Timestamp: ${Date.now()}`
+        ].join("\n");
+
+        let signature: string;
+        setIsSigningLoginMessage(true);
+        try {
+            signature = await signMessage(provider, message);
+        } catch (error) {
+            setIsSigningLoginMessage(false);
+            if (error instanceof EmbeddedProviderError) {
+                setJwtToken(false);
+                return;
+            } else {
+                throw error;
+            }
+        }
+        const acceptTandcs = acceptTandcsParam === TandCsNeeded.ACCEPTED;
+
+        const cardToken = await fetchAndParse(`${config.INTERNAL_API_URL}/auth/user`, {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json",
+              accept: 'application/json'
+            },
+            body: JSON.stringify({
+              publicKey: walletAddress,
+              signature,
+              message,
+              id: quartzCardUser?.id,
+              //change tbis so that 
+              ...(acceptTandcsParam && { acceptQuartzCardTerms: acceptTandcs }),
+            })
+        });
+        
+        setJwtToken(cardToken);
+        setIsSigningLoginMessage(false);
+      },
+      onError: (error) => {
+        console.error("Failed to log in: ", error);
+      },
+      // TODO: Add pending state
+    })
 }
