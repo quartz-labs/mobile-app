@@ -10,7 +10,7 @@ import { DEFAULT_REFETCH_INTERVAL } from "@/config/constants";
 export const useAccountStatusQuery = (address: PublicKey | null) => {
     const query = createQuery<AccountStatus>({
         queryKey: ["account-status", address?.toBase58() ?? ""],
-        url: `${config.API_URL}/program/account-status`,
+        url: `${config.API_URL}/program/data/account-status`,
         params: address ? {
             wallet: address.toBase58()
         } : undefined,

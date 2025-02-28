@@ -10,6 +10,8 @@ import type { ProviderCardHistory } from "@/types/interfaces/ProviderCardHistory
 export const useQuartzCardUserQuery = (publicKey: PublicKey | null) => {
     const { setQuartzCardUser } = useStore();
 
+    console.log("URL", `${config.INTERNAL_API_URL}/auth/user-info`);
+    console.log("publicKey", publicKey?.toBase58());
     const query = createQuery<QuartzCardUser>({
         queryKey: ["card-user", "quartz-card-user"],
         url: `${config.INTERNAL_API_URL}/auth/user-info`,
@@ -22,6 +24,8 @@ export const useQuartzCardUserQuery = (publicKey: PublicKey | null) => {
         accept404: true,
         onSuccess: (data) => setQuartzCardUser(data)
     });
+
+    console.log("query", query);
     return query();
 };
 
