@@ -8,9 +8,9 @@ const envSchema = z.object({
 
 type Config = z.infer<typeof envSchema>;
 const config: Config = envSchema.parse({
-    API_URL: process.env.API_URL,
-    INTERNAL_API_URL: process.env.INTERNAL_API_URL,
-    CARD_PEM: process.env.CARD_PEM
+    API_URL: process.env.EXPO_PUBLIC_API_URL,
+    INTERNAL_API_URL: process.env.EXPO_PUBLIC_INTERNAL_API_URL,
+    CARD_PEM: process.env.EXPO_PUBLIC_CARD_PEM
 });
 
 export default config;
