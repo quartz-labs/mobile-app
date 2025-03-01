@@ -1,8 +1,8 @@
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 import { useStore } from "@/utils/store";
-import type React from "react";
 import { baseUnitToDecimal, MARKET_INDEX_USDC } from "@quartz-labs/sdk";
 import { Image } from "expo-image";
-import styles from "./RepayWarning.module.css";
 
 export default function RepayWarning() {
     const { health, borrowLimits } = useStore();
@@ -11,17 +11,40 @@ export default function RepayWarning() {
     const availableCredit = baseUnitToDecimal(usdcBorrowLimitBaseUnits, MARKET_INDEX_USDC);
 
     if (availableCredit >= 30 || (health ?? 0) >= 50) {
-        return (<></>);
+        return null;
     }
 
     return (
-        <div className={styles.repayWarning}>
+        <View style={styles.repayWarning}>
             <Image
                 source={require('@/assets/images/info.webp')}
-                alt=""
-                style={{ width: 24, height: 24 }}
+                style={styles.icon}
+                contentFit="contain"
             />
-            <p>Collateral will be sold to repay loans if available credit reaches $0</p>
-        </div>
+            <Text style={styles.warningText}>
+                Collateral will be sold to repay loans if available credit reaches $0
+            </Text>
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    repayWarning: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 204, 0, 0.2)',
+        borderRadius: 8,
+        padding: 12,
+        marginVertical: 8,
+    },
+    icon: {
+        width: 24,
+        height: 24,
+        marginRight: 10,
+    },
+    warningText: {
+        flex: 1,
+        fontSize: 14,
+        color: '#333',
+    }
+});
