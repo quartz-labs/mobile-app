@@ -1,4 +1,4 @@
-export enum ModalVariation {
+export enum PageVariation {
     DISABLED = "DISABLED",
     NOTIFICATIONS = "NOTIFICATIONS",
     ADD_FUNDS = "ADD_FUNDS",
