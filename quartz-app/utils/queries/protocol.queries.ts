@@ -140,7 +140,7 @@ export const useSpendLimitQuery = (address: PublicKey | null) => {
         timeframe: number;
     }>({
         queryKey: ["user", "spend-limits", address?.toBase58() ?? ""],
-        url: `${config.API_URL}/program/data/spend-limit`,
+        url: `${config.API_URL}/program/data/spend-limits`,
         params: address ? { 
             address: address.toBase58(),
         } : undefined,
