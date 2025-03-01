@@ -124,3 +124,18 @@ export function useRefetchDepositLimits() {
         queryClient.invalidateQueries({ queryKey: ["user", "deposit-limits"], refetchType: "all" });
     }, [queryClient]);
 }
+
+export function useRefetchWithdrawLimits() {
+    const queryClient = useQueryClient();
+
+    return useCallback(async (signature?: string) => {
+        if (signature) {
+            try { 
+                await fetch(`/api/confirm-tx?signature=${signature}`); 
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            } catch { }
+        }
+
+        queryClient.invalidateQueries({ queryKey: ["user", "withdraw-limits"], refetchType: "all" });
+    }, [queryClient]);
+}
