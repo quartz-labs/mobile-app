@@ -10,6 +10,7 @@ import {
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { useAppState } from "@/context/AppStateContext";
 import Balances from "./Home/Balances/Balances";
+import Assets from "./Home/Assets/Assets";
 
 export const UserScreen = () => {
   const [password, setPassword] = useState("");
@@ -145,6 +146,8 @@ export const UserScreen = () => {
             <Text>Wallet Balance: {walletBalance} SOL</Text>
 
             <Balances />
+
+            <Assets isLoading={false} />
 
             {wallet.status === "connecting" && <Text>Loading wallet...</Text>}
 
