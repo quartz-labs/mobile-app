@@ -27,6 +27,7 @@
     "@solana/web3.js": "^1.98.0",
     "@tanstack/react-query": "^5.66.9",
     "buffer": "^6.0.3",
+    "crypto-es": "^2.1.0",
     "expo": "~52.0.37",
     "expo-application": "~6.0.2",
     "expo-blur": "~14.0.3",
@@ -56,7 +57,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "viem": "^2.23.5"
+    "viem": "^2.23.5",
+    "@react-native-picker/picker": "2.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
