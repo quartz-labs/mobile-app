@@ -238,6 +238,17 @@ export function getTokenIcon(marketIndex: MarketIndex) {
     return `@/assets/tokens/${TOKENS[marketIndex].name.toLowerCase()}.webp`;
 }
 
+
+export function validateAmount(marketIndex: MarketIndex, amountDecimal: number, maxAmountBaseUnits: number, minAmountBaseUnits: number = 1) {
+    const minAmountDecimal = baseUnitToDecimal(minAmountBaseUnits, marketIndex);
+    const maxAmountDecimal = baseUnitToDecimal(maxAmountBaseUnits, marketIndex);
+
+    if (isNaN(amountDecimal)) return "Invalid input";
+    if (amountDecimal > maxAmountDecimal) return `Maximum amount: ${maxAmountDecimal}`;
+    if (amountDecimal < minAmountDecimal) return `Minimum amount: ${minAmountDecimal}`;
+    return "";
+}
+
 // export const getCardDetailsFromInternalApi = async (
 //     id: string,
 //     jwtToken: string
