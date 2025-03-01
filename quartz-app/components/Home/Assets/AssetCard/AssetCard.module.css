@@ -1,0 +1,59 @@
+.assetCard {
+    border-radius: 10px;
+    padding: 12px;
+    background-image: 
+        url("/noise.png"),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%),
+        linear-gradient(#0B111D80, #0B111D80);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--asset-card-height);
+}
+
+.emptyCardText {
+    color: var(--color-text-extra-light);
+    padding-left: 10px;
+}
+
+.tokenInfo {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 8px;
+}
+
+.tokenInfo p {
+    font-size: var(--font-size-asset-amount);
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.value {
+    font-size: var(--font-size-large);
+}
+
+.valueDecimal {
+    font-size: calc(var(--font-size-large) * 0.55);
+}
+
+/* @media only screen and (max-width: 1024px) and (min-width: 800px) {
+    .details {
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: end;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .mobileContent {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+} */
