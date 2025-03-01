@@ -36,31 +36,30 @@ export default function TabLayout() {
   const walletPromise = useEmbeddedSolanaWallet();
   const account = getUserEmbeddedSolanaWallet(user);
 
-  if (privyUser === undefined || privyUser === null) {
-    setPrivyUser(user ?? undefined);
-  }
+  useEffect(() => {
+    // Only update if values are missing but their sources exist
+    if ((privyUser === undefined || privyUser === null) && user) {
+      setPrivyUser(user);
+    }
+    
+    if (wallet === undefined && walletPromise) {
+      setWallet(walletPromise);
+    }
+    
+    if (!provider && wallet?.getProvider) {
+      const newProvider = wallet.getProvider();  
+      setProvider(newProvider);
+    }
+  }, [user, privyUser, setPrivyUser, wallet, walletPromise, setWallet, provider, setProvider]);
 
-  if (wallet === undefined) {
-    setWallet(walletPromise);
-  }
 
-  if (wallet?.getProvider && !provider) {
-    const provider = wallet.getProvider();  
-    setProvider(provider);
-  }
-  
-
-  const walletAddress = wallet?.wallets?.[0]?.address ? new PublicKey(wallet.wallets[0].address) : null;
-
-  // console.log('wallet', wallet);
-  // const walletAddress = new PublicKey(wallet?.wallets?.[0]?.address ?? '');
-  // console.log('walletAddress', walletAddress);
-
-  console.log('account', account);
+  const walletAddress = account?.address ? new PublicKey(account.address) : null;
 
   // Quartz account status
   const { data: accountStatus, isLoading: isAccountStatusLoading } = useAccountStatusQuery(walletAddress);
+  console.log('accountStatus', accountStatus);
   const isInitialized = (accountStatus === AccountStatus.INITIALIZED && !isAccountStatusLoading);
+  console.log('isInitialized', isInitialized);
   useEffect(() => {
     setIsInitialized(isInitialized);
   }, [setIsInitialized, isInitialized]);
