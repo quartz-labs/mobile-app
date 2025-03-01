@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import Config from "react-native-config";
 
 const envSchema = z.object({
     API_URL: z.string().url().transform((url) => url.endsWith('/') ? url.slice(0, -1) : url),
@@ -9,9 +8,9 @@ const envSchema = z.object({
 
 type Config = z.infer<typeof envSchema>;
 const config: Config = envSchema.parse({
-    API_URL: Config.API_URL,
-    INTERNAL_API_URL: Config.INTERNAL_API_URL,
-    CARD_PEM: Config.CARD_PEM
+    API_URL: process.env.API_URL,
+    INTERNAL_API_URL: process.env.INTERNAL_API_URL,
+    CARD_PEM: process.env.CARD_PEM
 });
 
 export default config;
