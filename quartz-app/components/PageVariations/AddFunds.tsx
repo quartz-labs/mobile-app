@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import InputSection from "./Components/Input.ModalComponent";
-import Buttons from "./Components/Buttons.ModalComponent";
+import InputSection from "./Components/Input.PageComponent";
+import Buttons from "./Components/Buttons.PageComponent";
 import { useStore } from "@/utils/store";
 import { useError } from "@/context/error-provider";
 import { MarketIndex, baseUnitToDecimal, decimalToBaseUnit } from "@quartz-labs/sdk";
