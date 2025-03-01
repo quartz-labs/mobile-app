@@ -28,7 +28,6 @@ export default function RootLayout() {
     Inter_600SemiBold,
   });
 
-  console.log("Root Layout!!");
 
   useEffect(() => {
     if (loaded) {
@@ -42,7 +41,6 @@ export default function RootLayout() {
 
   // Get Privy configuration from Constants
   const privyAppId = Constants.expoConfig?.extra?.privyAppId || '';
-  console.log('privyAppId', privyAppId);
   const privyClientId = Constants.expoConfig?.extra?.privyClientId || '';
 
   return (

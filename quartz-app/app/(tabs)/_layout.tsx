@@ -57,9 +57,7 @@ export default function TabLayout() {
 
   // Quartz account status
   const { data: accountStatus, isLoading: isAccountStatusLoading } = useAccountStatusQuery(walletAddress);
-  console.log('accountStatus', accountStatus);
   const isInitialized = (accountStatus === AccountStatus.INITIALIZED && !isAccountStatusLoading);
-  console.log('isInitialized', isInitialized);
   useEffect(() => {
     setIsInitialized(isInitialized);
   }, [setIsInitialized, isInitialized]);
@@ -79,8 +77,6 @@ export default function TabLayout() {
 
 
   const { data: quartzCardUser, status: quartzCardUserStatus } = useQuartzCardUserQuery(walletAddress);
-  console.log("quartzCardUser", quartzCardUser);
-  console.log("quartzCardUserStatus", quartzCardUserStatus);
   useProviderCardUserQuery(quartzCardUser?.card_api_user_id ?? null);
   useCardDetailsQuery(
     quartzCardUser?.card_api_user_id ?? null,
