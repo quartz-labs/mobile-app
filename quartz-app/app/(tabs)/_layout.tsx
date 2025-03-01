@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Platform, View } from 'react-native';
-
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -21,9 +20,35 @@ import { QuartzCardAccountStatus } from '@/types/enums/QuartzCardAccountStatus.e
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
+  const {
+    setIsInitialized,
+    setSpendLimitRefreshing,
+    jwtToken,
+    setProvider,
+    provider,
+    wallet,
+    setWallet,
+    privyUser,
+    setPrivyUser,
+  } = useStore();
+
   const { user } = usePrivy();
-  const wallet = useEmbeddedSolanaWallet();
+  const walletPromise = useEmbeddedSolanaWallet();
   const account = getUserEmbeddedSolanaWallet(user);
+
+  if (privyUser === undefined || privyUser === null) {
+    setPrivyUser(user ?? undefined);
+  }
+
+  if (wallet === undefined) {
+    setWallet(walletPromise);
+  }
+
+  if (wallet?.getProvider && !provider) {
+    const provider = wallet.getProvider();  
+    setProvider(provider);
+  }
+  
 
   const walletAddress = wallet?.wallets?.[0]?.address ? new PublicKey(wallet.wallets[0].address) : null;
 
@@ -32,11 +57,6 @@ export default function TabLayout() {
   // console.log('walletAddress', walletAddress);
 
   console.log('account', account);
-  const {
-    setIsInitialized,
-    setSpendLimitRefreshing,
-    jwtToken,
-  } = useStore();
 
   // Quartz account status
   const { data: accountStatus, isLoading: isAccountStatusLoading } = useAccountStatusQuery(walletAddress);

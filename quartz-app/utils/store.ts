@@ -6,6 +6,7 @@ import type { ProviderCardUser } from "@/types/interfaces/ProviderCardUser.inter
 import type { QuartzCardUser } from "@/types/interfaces/QuartzCardUser.interface";
 import type { JwtToken } from "@/types/JwtToken.type";
 import type { ProviderCardHistory } from "@/types/interfaces/ProviderCardHistory.interface";
+import { EmbeddedSolanaWalletState, PrivyEmbeddedSolanaWalletProvider, PrivyUser } from "@privy-io/expo";
 
 type State = {
   isInitialized: boolean;
@@ -29,6 +30,9 @@ type State = {
   spendLimitRefreshing?: boolean;
   txHistory?: ProviderCardHistory[];
   doneLoading?: boolean;
+  provider?: Promise<PrivyEmbeddedSolanaWalletProvider>;
+  wallet?: EmbeddedSolanaWalletState;
+  privyUser?: PrivyUser;
 };
 
 type Action = {
@@ -53,6 +57,9 @@ type Action = {
   setSpendLimitRefreshing: (refreshing?: boolean) => void;
   setTxHistory: (txHistory?: ProviderCardHistory[]) => void;
   setDoneLoading: (doneLoading?: boolean) => void;
+  setProvider: (provider?: Promise<PrivyEmbeddedSolanaWalletProvider>) => void;
+  setWallet: (wallet?: EmbeddedSolanaWalletState) => void;
+  setPrivyUser: (privyUser?: PrivyUser) => void;
 }
 
 export const useStore = create<State & Action>((set) => ({
@@ -77,6 +84,9 @@ export const useStore = create<State & Action>((set) => ({
   spendLimitRefreshing: false,
   txHistory: undefined,
   doneLoading: undefined,
+  provider: undefined,
+  wallet: undefined,
+  privyUser: undefined,
 
   setIsInitialized: (isInitialized: boolean) => set({ isInitialized }),
   setPrices: (prices?: Record<MarketIndex, number>) => set({ prices }),
@@ -99,4 +109,7 @@ export const useStore = create<State & Action>((set) => ({
   setSpendLimitRefreshing: (refreshing?: boolean) => set({ spendLimitRefreshing: refreshing }),
   setTxHistory: (txHistory?: ProviderCardHistory[]) => set({ txHistory }),
   setDoneLoading: (doneLoading?: boolean) => set({ doneLoading }),
+  setProvider: (provider?: Promise<PrivyEmbeddedSolanaWalletProvider>) => set({ provider }),
+  setWallet: (wallet?: EmbeddedSolanaWalletState) => set({ wallet }),
+  setPrivyUser: (privyUser?: PrivyUser) => set({ privyUser }),
 }));
