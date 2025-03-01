@@ -11,6 +11,9 @@ import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } f
 import { useAppState } from "@/context/AppStateContext";
 import Balances from "./Home/Balances/Balances";
 import Assets from "./Home/Assets/Assets";
+import { useStore } from "@/utils/store";
+import ButtonRow from "./Home/ButtonRow/ButtonRow";
+import RepayWarning from "./RepayWarning/RepayWarning";
 
 export const UserScreen = () => {
   const [password, setPassword] = useState("");
@@ -26,6 +29,9 @@ export const UserScreen = () => {
   const [provider, setProvider] = useState<PrivyEmbeddedSolanaWalletProvider | null>(null);
 
   const [walletBalance, setWalletBalance] = useState<number>(0);
+
+  const { isInitialized } = useStore();
+
 
   const connection = new Connection('https://api.devnet.solana.com');
 
@@ -148,6 +154,13 @@ export const UserScreen = () => {
             <Balances />
 
             <Assets isLoading={false} />
+
+            {isInitialized && (
+              <>
+                <RepayWarning />
+                <ButtonRow  />
+              </>
+            )}
 
             {wallet.status === "connecting" && <Text>Loading wallet...</Text>}
 
