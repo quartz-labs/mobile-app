@@ -55,8 +55,9 @@ export default function AddFundsPage() {
             const endpoint = buildEndpointURL(`${config.API_URL}/program/build-tx/deposit`, {
                 address: walletAddress.toBase58(),
                 amountBaseUnits: decimalToBaseUnit(amountDecimals, marketIndex),
-                repayingLoan: false,
-                marketIndex
+                repayingLoan: true,
+                marketIndex,
+                useMaxAmount: true
             });
             const response = await fetchAndParse(endpoint, undefined, 3);
             const transaction = deserializeTransaction(response.transaction);
