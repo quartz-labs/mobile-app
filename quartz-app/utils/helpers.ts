@@ -75,7 +75,7 @@ export async function signAndSendTransaction(
     const serializedTransaction = Buffer.from(txResponse.signedTransaction.serialize()).toString("base64");
     
     console.log("serializedTransaction in signAndSendTransaction", serializedTransaction);
-    const url = `${config.API_URL}/program/send-tx`;
+    const url = `${config.API_URL}/program/tx/send`;
     console.log("url in signAndSendTransaction", url);
     const response = await fetch(url, {
         method: "POST",

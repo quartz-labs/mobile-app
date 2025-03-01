@@ -11,7 +11,7 @@ export function useRefetchAccountStatus() {
     return useCallback(async (signature?: string) => {
         if (signature) {
             try { 
-                await fetch(`${config.API_URL}/program/confirm-tx?signature=${signature}`); 
+                await fetch(`${config.API_URL}/program/tx/confirm?signature=${signature}`); 
                 await new Promise(resolve => setTimeout(resolve, 1000));
             } catch { }
         }
