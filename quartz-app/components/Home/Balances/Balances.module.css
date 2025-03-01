@@ -1,0 +1,73 @@
+.balanceOverview {
+    width: var(--balance-wrapper-width);
+    display: grid;
+    grid-template-columns: 2.2fr 2fr;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}
+
+.detailBalanceWrapper {
+    height: 100%;
+}
+
+@media only screen and (max-width: 580px) {
+    .balanceOverview {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+@media only screen and (max-width: 375px) {
+    .balanceOverview {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        gap: 20px;
+    }
+}
+
+.netBalanceWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.netBalance {
+    font-size: var(--font-size-h0);
+}
+
+.netBalanceDecimal {
+    font-size: calc(var(--font-size-h0) * 0.55);
+}
+
+.netRatePositive {
+    color: var(--color-light-green);
+}
+
+.netRateNegative {
+    color: var(--color-light-red);
+}
+
+.detailBalanceTitle {
+    font-size: var(--font-size-p);
+}
+
+.detailBalance {
+    font-size: var(--font-size-balance-detail);
+}
+
+.detailBalanceDecimal {
+    font-size: calc(var(--font-size-balance-detail) * 0.55);
+}
+
+.detailBalanceRate {
+    font-size: var(--font-size-small);
+}
+
+.rateHeight {
+    line-height: 25px;
+}
+
+.notInitialized {
+    color: var(--color-text-extra-light);
+}

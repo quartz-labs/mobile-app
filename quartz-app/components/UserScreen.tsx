@@ -9,6 +9,7 @@ import {
 } from "@privy-io/expo";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { useAppState } from "@/context/AppStateContext";
+import Balances from "./Home/Balances/Balances";
 
 export const UserScreen = () => {
   const [password, setPassword] = useState("");
@@ -142,6 +143,8 @@ export const UserScreen = () => {
             )}
 
             <Text>Wallet Balance: {walletBalance} SOL</Text>
+
+            <Balances />
 
             {wallet.status === "connecting" && <Text>Loading wallet...</Text>}
 
