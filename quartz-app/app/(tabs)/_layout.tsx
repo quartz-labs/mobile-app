@@ -17,7 +17,6 @@ import { useQuartzCardUserQuery } from '@/utils/queries/internalApi.queries';
 import { useCardDetailsQuery, useTxHistoryQuery } from '@/utils/queries/internalApi.queries';
 import { useProviderCardUserQuery } from '@/utils/queries/internalApi.queries';
 import { QuartzCardAccountStatus } from '@/types/enums/QuartzCardAccountStatus.enum';
-import { ModalVariation } from '@/types/enums/ModalVariation.enum';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
