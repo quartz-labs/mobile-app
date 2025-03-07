@@ -14,6 +14,7 @@ import { EmbeddedProviderError, usePrivy } from "@privy-io/expo";
 import { getUserEmbeddedSolanaWallet } from "@privy-io/expo";
 import { useEmbeddedSolanaWallet } from "@privy-io/expo";
 import { PublicKey } from "@solana/web3.js";
+import config from "@/config/config";
 
 export default function WithdrawModal() {
     //TOOD: Import the wallet from privy
@@ -73,7 +74,7 @@ export default function WithdrawModal() {
 
         setAwaitingSign(true);
         try {
-            const endpoint = buildEndpointURL("/api/build-tx/withdraw", {
+            const endpoint = buildEndpointURL(`${config.API_URL}/program/build-tx/withdraw`, {
                 address: walletAddress.toBase58(),
                 allowLoan: false,
                 amountBaseUnits: decimalToBaseUnit(amountDecimals, marketIndex),
