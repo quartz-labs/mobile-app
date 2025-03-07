@@ -191,7 +191,7 @@ export default function SpendLimitsPage() {
 const styles = StyleSheet.create({
   contentWrapper: {
     padding: 20,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.light.background,
     borderRadius: 12,
     width: "100%",
   },
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   inputField: {
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.light.background,
     borderRadius: 8,
     padding: 12,
     color: Colors.light.text,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   pickerWrapper: {
     flex: 1,
     marginLeft: 10,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.light.background,
     borderRadius: 8,
     overflow: 'hidden',
   },
