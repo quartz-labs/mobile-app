@@ -45,13 +45,18 @@ export default function TabLayout() {
     if (wallet === undefined && walletPromise) {
       setWallet(walletPromise);
     }
-    
-    if (!provider && wallet?.getProvider) {
-      const newProvider = wallet.getProvider();  
-      setProvider(newProvider);
-    }
-  }, [user, privyUser, setPrivyUser, wallet, walletPromise, setWallet, provider, setProvider]);
+  }, [user, privyUser, setPrivyUser, wallet, walletPromise, setWallet]);
 
+  useEffect(() => {
+    const initProvider = async () => {
+      if (!provider && wallet?.getProvider) {
+        const newProvider = await wallet.getProvider();  
+        setProvider(newProvider);
+      }
+    };
+
+    initProvider();
+  }, [wallet, provider, setProvider]);
 
   const walletAddress = account?.address ? new PublicKey(account.address) : null;
 

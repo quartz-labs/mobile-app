@@ -30,7 +30,7 @@ type State = {
   spendLimitRefreshing?: boolean;
   txHistory?: ProviderCardHistory[];
   doneLoading?: boolean;
-  provider?: Promise<PrivyEmbeddedSolanaWalletProvider>;
+  provider?: PrivyEmbeddedSolanaWalletProvider;
   wallet?: EmbeddedSolanaWalletState;
   privyUser?: PrivyUser;
 };
@@ -57,7 +57,7 @@ type Action = {
   setSpendLimitRefreshing: (refreshing?: boolean) => void;
   setTxHistory: (txHistory?: ProviderCardHistory[]) => void;
   setDoneLoading: (doneLoading?: boolean) => void;
-  setProvider: (provider?: Promise<PrivyEmbeddedSolanaWalletProvider>) => void;
+  setProvider: (provider?: PrivyEmbeddedSolanaWalletProvider) => void;
   setWallet: (wallet?: EmbeddedSolanaWalletState) => void;
   setPrivyUser: (privyUser?: PrivyUser) => void;
 }
@@ -109,7 +109,7 @@ export const useStore = create<State & Action>((set) => ({
   setSpendLimitRefreshing: (refreshing?: boolean) => set({ spendLimitRefreshing: refreshing }),
   setTxHistory: (txHistory?: ProviderCardHistory[]) => set({ txHistory }),
   setDoneLoading: (doneLoading?: boolean) => set({ doneLoading }),
-  setProvider: (provider?: Promise<PrivyEmbeddedSolanaWalletProvider>) => set({ provider }),
+  setProvider: (provider?: PrivyEmbeddedSolanaWalletProvider) => set({ provider }),
   setWallet: (wallet?: EmbeddedSolanaWalletState) => set({ wallet }),
   setPrivyUser: (privyUser?: PrivyUser) => set({ privyUser }),
 }));
