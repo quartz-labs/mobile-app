@@ -1,10 +1,11 @@
-import { Text, View } from "react-native";
+import TransactionHistory from "@/components/Transaction/TransactionHistory";
+import { useStore } from "@/utils/store";
 
 export default function TxHistoryPage() {
 
+  const { txHistory } = useStore();
+
   return (
-    <View>
-      <Text>Transaction History Page!</Text>
-    </View>
+      <TransactionHistory transactions={txHistory ?? []}/>
   );
 }
