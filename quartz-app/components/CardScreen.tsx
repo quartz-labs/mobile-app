@@ -8,7 +8,6 @@ import { useLoginCardUser } from '@/utils/hooks';
 import { getUserEmbeddedSolanaWallet, useEmbeddedSolanaWallet } from "@privy-io/expo";
 import { usePrivy } from "@privy-io/expo";
 import { PublicKey } from "@solana/web3.js";
-import { TandCsNeeded } from "@/types/enums/QuartzCardAccountStatus.enum";
 import { Colors } from "@/constants/Colors";
 
 
@@ -17,7 +16,6 @@ export default function CardDetails() {
         jwtToken,
         cardDetails,
         provider,
-        setProvider
     } = useStore();
 
     const [loadingDetails, setLoadingDetails] = useState(false);
@@ -28,8 +26,6 @@ export default function CardDetails() {
     const { user } = usePrivy();
     const account = getUserEmbeddedSolanaWallet(user);
 
-    const loginCardUser = useLoginCardUser();
-    const wallet = useEmbeddedSolanaWallet();
 
     const getCardDetails = async (cardId: string) => {
         setLoadingDetails(true);
