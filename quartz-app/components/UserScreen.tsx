@@ -14,6 +14,7 @@ import Assets from "./Home/Assets/Assets";
 import { useStore } from "@/utils/store";
 import ButtonRow from "./Home/ButtonRow/ButtonRow";
 import RepayWarning from "./RepayWarning/RepayWarning";
+import { router } from "expo-router";
 
 export const UserScreen = () => {
   const [password, setPassword] = useState("");
@@ -158,7 +159,13 @@ export const UserScreen = () => {
             {isInitialized && (
               <>
                 <RepayWarning />
-                <ButtonRow  />
+                <ButtonRow 
+                  primaryLabel="Add Funds" 
+                  secondaryLabel="Withdraw"
+                  isLoading={false} 
+                  onPrimaryPress={() => router.push("/addFunds")} 
+                  onSecondaryPress={() => router.push("/withdraw")}
+                />
               </>
             )}
 
