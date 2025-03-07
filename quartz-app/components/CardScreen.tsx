@@ -9,6 +9,7 @@ import { getUserEmbeddedSolanaWallet, useEmbeddedSolanaWallet } from "@privy-io/
 import { usePrivy } from "@privy-io/expo";
 import { PublicKey } from "@solana/web3.js";
 import { Colors } from "@/constants/Colors";
+import ButtonRow from "./Home/ButtonRow/ButtonRow";
 
 
 export default function CardDetails() {
@@ -92,33 +93,13 @@ export default function CardDetails() {
                     pan={cardPan}
                 />
 
-                <View style={styles.buttonRow}>
-                    <TouchableOpacity
-                        style={styles.mainButton}
-                        //TODO: Add spend limit page
-                        onPress={() => router.push('/spendLimit')}
-                    >
-                        <Text style={styles.buttonText}>Spend Limits</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.mainButton}
-                        onPress={swapCardDetailsVisibility}
-                        disabled={loadingDetails}
-                    >
-                        {loadingDetails ? (
-                            <ActivityIndicator
-                                color="#ffffff"
-                                size="small"
-                                testID="loader"
-                            />
-                        ) : (
-                            <Text style={styles.buttonText}>
-                                {showDetails ? "Hide Details" : "View Details"}
-                            </Text>
-                        )}
-                    </TouchableOpacity>
-                </View>
+                <ButtonRow
+                    primaryLabel="Spend Limits"
+                    secondaryLabel="View Details"
+                    isLoading={false}
+                    onPrimaryPress={() => router.push('/spendLimit')}
+                    onSecondaryPress={() => swapCardDetailsVisibility()}
+                />
             </View>
         </View>
     );
@@ -136,28 +117,28 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     glassButton: {
-      flex: 1,
-      padding: 15,
-      borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginHorizontal: 5,
+        flex: 1,
+        padding: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 5,
     },
     mainButton: {
-      backgroundColor: Colors.dark.tint,
+        backgroundColor: Colors.dark.tint,
     },
     ghostButton: {
-      backgroundColor: 'transparent',
-      borderWidth: 1,
-      borderColor: Colors.dark.tint,
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: Colors.dark.tint,
     },
     buttonText: {
-      color: Colors.light.text,
-      fontWeight: 'bold',
+        color: Colors.light.text,
+        fontWeight: 'bold',
     },
     buttonRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 30,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 30,
     }
 });
