@@ -171,30 +171,6 @@ export const UserScreen = () => {
 
             {wallet.status === "error" && <Text>{wallet.error}</Text>}
 
-            {wallet.status === "not-created" && (
-              <Button title="Create Wallet" onPress={() => wallet.create()} />
-            )}
-
-            {wallet.status === "connected" && (
-              <Button
-                title="Sign Message"
-                onPress={() => signMessage()}
-              />
-            )}
-
-            {wallet.status === "connected" && (
-              <Button
-                title="Get Balance"
-                onPress={() => getBalance()}
-              />
-            )}
-
-            {wallet.status === "connected" && (
-              <Button
-                title="Send Transaction"
-                onPress={() => signAndSendTransaction()}
-              />
-            )}
 
             {wallet.status === "needs-recovery" && (
               <Button
@@ -202,29 +178,6 @@ export const UserScreen = () => {
                 onPress={() => wallet.recover()}
               />
             )}
-          </View>
-
-          <View style={{ display: "flex", flexDirection: "column" }}>
-            {signedMessages.map((m) => (
-              <React.Fragment key={m}>
-                <Text
-                  style={{
-                    color: "rgba(0,0,0,0.5)",
-                    fontSize: 12,
-                    fontStyle: "italic",
-                  }}
-                >
-                  {m}
-                </Text>
-                <View
-                  style={{
-                    marginVertical: 5,
-                    borderBottomWidth: 1,
-                    borderBottomColor: "rgba(0,0,0,0.2)",
-                  }}
-                />
-              </React.Fragment>
-            ))}
           </View>
           <Button title="Logout" onPress={handleLogout} />
         </View>
