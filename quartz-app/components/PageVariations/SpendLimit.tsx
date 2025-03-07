@@ -124,7 +124,7 @@ export default function SpendLimitsPage() {
       </Text>
 
       <View style={styles.inputSection}>
-        <Text style={styles.inputLabel}>Spend Limit:</Text>
+        <Text style={styles.inputLabel}>New Spend Limit:</Text>
 
         <View style={styles.inputFieldWrapper}>
           {!showLoading ? (
