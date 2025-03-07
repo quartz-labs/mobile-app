@@ -55,7 +55,7 @@ export default function AddFundsPage() {
             const endpoint = buildEndpointURL(`${config.API_URL}/program/build-tx/deposit`, {
                 address: walletAddress.toBase58(),
                 amountBaseUnits: decimalToBaseUnit(amountDecimals, marketIndex),
-                repayingLoan: true,
+                repayingLoan: false,
                 marketIndex,
                 useMaxAmount: true
             });
@@ -65,6 +65,7 @@ export default function AddFundsPage() {
 
             setAwaitingSign(false);
             // TODO: Redirect to home page
+            console.log("Signature: ", signature)
             if (signature) router.push('/');;
         } catch (error) {
             if (error instanceof EmbeddedProviderError) showTxStatus({ status: TxStatus.SIGN_REJECTED });
