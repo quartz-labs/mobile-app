@@ -101,7 +101,7 @@ export function useRefetchAccountData() {
     return useCallback(async (signature?: string) => {
         if (signature) {
             try { 
-                await fetch(`/api/confirm-tx?signature=${signature}`); 
+                await fetch(`${config.INTERNAL_API_URL}/confirm-tx?signature=${signature}`); 
                 await new Promise(resolve => setTimeout(resolve, 500));
             } catch { }
         }
@@ -116,7 +116,7 @@ export function useRefetchDepositLimits() {
     return useCallback(async (signature?: string) => {
         if (signature) {
             try { 
-                await fetch(`/api/confirm-tx?signature=${signature}`); 
+                await fetch(`${config.INTERNAL_API_URL}/confirm-tx?signature=${signature}`); 
                 await new Promise(resolve => setTimeout(resolve, 500));
             } catch { }
         }
@@ -131,11 +131,26 @@ export function useRefetchWithdrawLimits() {
     return useCallback(async (signature?: string) => {
         if (signature) {
             try { 
-                await fetch(`/api/confirm-tx?signature=${signature}`); 
+                await fetch(`${config.INTERNAL_API_URL}/confirm-tx?signature=${signature}`); 
                 await new Promise(resolve => setTimeout(resolve, 1000));
             } catch { }
         }
 
         queryClient.invalidateQueries({ queryKey: ["user", "withdraw-limits"], refetchType: "all" });
+    }, [queryClient]);
+}
+
+export function useRefetchSpendLimits() {
+    const queryClient = useQueryClient();
+
+    return useCallback(async (signature?: string) => {
+        if (signature) {
+            try { 
+                await fetch(`${config.INTERNAL_API_URL}/confirm-tx?signature=${signature}`); 
+                await new Promise(resolve => setTimeout(resolve, 500));
+            } catch { }
+        }
+
+        queryClient.invalidateQueries({ queryKey: ["user", "spend-limits"], refetchType: "all" });
     }, [queryClient]);
 }
