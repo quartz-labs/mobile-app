@@ -1,10 +1,14 @@
 import config from "@/config/config";
 import { TxStatus, TxStatusProps } from "@/context/tx-status-provider";
 import { AssetInfo } from "@/types/interfaces/AssetInfo.interface";
+import { QuartzCardUser } from "@/types/interfaces/QuartzCardUser.interface";
 import { Rate } from "@/types/interfaces/Rate.interface";
-import { EmbeddedSolanaWalletState } from "@privy-io/expo";
+import { EmbeddedProviderError, EmbeddedSolanaWalletState, PrivyEmbeddedSolanaWalletProvider, useEmbeddedSolanaWallet } from "@privy-io/expo";
 import { baseUnitToDecimal, MarketIndex, retryWithBackoff, TOKENS } from "@quartz-labs/sdk";
 import { VersionedTransaction } from "@solana/web3.js";
+import { randomUUID } from 'expo-crypto';
+import CryptoES from 'crypto-es';
+import { TandCsNeeded } from "@/types/enums/QuartzCardAccountStatus.enum";
 
 
 export function buildEndpointURL(baseEndpoint: string, params?: Record<string, any>) {
@@ -23,7 +27,7 @@ export async function fetchAndParse(url: string, req?: RequestInit | undefined, 
         async () => fetch(url, req),
         retries
     );
-    
+
     if (!response.ok) {
         let body;
         try {
@@ -52,8 +56,8 @@ export function deserializeTransaction(serializedTx: string): VersionedTransacti
 }
 
 export async function signAndSendTransaction(
-    transaction: VersionedTransaction, 
-    wallet: EmbeddedSolanaWalletState, 
+    transaction: VersionedTransaction,
+    wallet: EmbeddedSolanaWalletState,
     showTxStatus: (props: TxStatusProps) => void,
     skipPreflight: boolean = false,
     skipTxProcessing: boolean = false
@@ -66,14 +70,14 @@ export async function signAndSendTransaction(
     const provider = await wallet.getProvider();
 
     const txResponse = await provider.request({
-      method: 'signTransaction',
-      params: {
-        transaction: transaction
-      }
+        method: 'signTransaction',
+        params: {
+            transaction: transaction
+        }
     });
 
     const serializedTransaction = Buffer.from(txResponse.signedTransaction.serialize()).toString("base64");
-    
+
     console.log("serializedTransaction in signAndSendTransaction", serializedTransaction);
     const url = `${config.API_URL}/program/tx/send`;
     console.log("url in signAndSendTransaction", url);
@@ -94,14 +98,14 @@ export async function signAndSendTransaction(
             showTxStatus({ status: TxStatus.BLOCKHASH_EXPIRED });
             return "";
         } else {
-            throw new Error(JSON.stringify(body.error) ?? `Could not fetch ${url}`); 
+            throw new Error(JSON.stringify(body.error) ?? `Could not fetch ${url}`);
         }
     }
 
     if (!skipTxProcessing) {
-        showTxStatus({ 
+        showTxStatus({
             signature: body.signature,
-            status: TxStatus.SENT 
+            status: TxStatus.SENT
         });
     }
     return body.signature;
@@ -185,7 +189,7 @@ export function formatDollarValue(num: number, decimalPlaces: number = 1): [stri
 export function generateAssetInfos(prices: Record<MarketIndex, number>, balances: Record<MarketIndex, number>, rates: Record<MarketIndex, Rate>) {
     const suppliedAssets: AssetInfo[] = [];
     const borrowedAssets: AssetInfo[] = [];
-    
+
     for (const marketIndex of MarketIndex) {
         const balance = baseUnitToDecimal(balances[marketIndex], marketIndex);
         const price = prices[marketIndex];
@@ -203,8 +207,8 @@ export function generateAssetInfos(prices: Record<MarketIndex, number>, balances
 
 export function formatTokenDisplay(balance: number, marketIndex?: MarketIndex): string {
     if (marketIndex === undefined) {
-        const truncedValue = balance < 999 
-            ? truncToDecimalPlaces(balance, 5) 
+        const truncedValue = balance < 999
+            ? truncToDecimalPlaces(balance, 5)
             : balance < 99999
                 ? truncToDecimalPlaces(balance, 2)
                 : truncToDecimalPlaces(balance, 0);
@@ -213,7 +217,7 @@ export function formatTokenDisplay(balance: number, marketIndex?: MarketIndex): 
     }
 
     const magnitude = Math.floor(Math.log10(Math.abs(balance))) + 1;
-    
+
     let precision = TOKENS[marketIndex].decimalPrecision.toNumber();
     if (magnitude >= 3) {
         precision = Math.max(0, precision - (magnitude - 2));
@@ -249,70 +253,179 @@ export function validateAmount(marketIndex: MarketIndex, amountDecimal: number, 
     return "";
 }
 
-// export const getCardDetailsFromInternalApi = async (
-//     id: string,
-//     jwtToken: string
-// ) => {
-//     const sessionId = await generateSessionId(config.CARD_PEM!);
+export const getCardDetailsFromInternalApi = async (
+    id: string,
+    jwtToken: string
+) => {
+    const sessionId = await generateSessionId(config.CARD_PEM!);
 
-//     const options = {
-//         method: 'POST',
-//         headers: {
-//             "Content-Type": "application/json",
-//             accept: 'application/json',
-//             "Authorization": `Bearer ${jwtToken}`
-//         },
-//         body: JSON.stringify({ sessionId: sessionId.sessionId })
-//     };
-//     const response = await fetchAndParse(`${config.INTERNAL_API_URL}card/issuing/secrets?id=${id}`, options);
-//     const decryptedPan = (await decryptSecret(response.encryptedPan.data, response.encryptedPan.iv, sessionId.secretKey))
-//         .replace(/[^\d]/g, '').slice(0, 16);
+    const options = {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            accept: 'application/json',
+            "Authorization": `Bearer ${jwtToken}`
+        },
+        body: JSON.stringify({ sessionId: sessionId.sessionId })
+    };
+    const response = await fetchAndParse(`${config.INTERNAL_API_URL}/card/issuing/secrets?id=${id}`, options);
 
-//     const decryptedCvc = (await decryptSecret(response.encryptedCvc.data, response.encryptedCvc.iv, sessionId.secretKey))
-//         .replace(/[^\d]/g, '').slice(0, 3);
+    const decryptedPan = (await decryptSecret(response.encryptedPan.data, response.encryptedPan.iv, sessionId.secretKey))
+        .replace(/[^\d]/g, '').slice(0, 16);
 
-//     return {
-//         pan: decryptedPan,
-//         cvc: decryptedCvc,
-//     }
-// }
+    const decryptedCvc = (await decryptSecret(response.encryptedCvc.data, response.encryptedCvc.iv, sessionId.secretKey))
+        .replace(/[^\d]/g, '').slice(0, 3);
 
-// export async function generateSessionId(pem: string) {
-//     if (!pem) throw new Error("pem is required");
+    return {
+        pan: decryptedPan,
+        cvc: decryptedCvc,
+    }
+    return {
+        pan: response.encryptedPan.data,
+        cvc: response.encryptedCvc.data,
+    };
+}
 
-//     const secretKey = crypto.randomUUID().replace(/-/g, "");
-//     const secretKeyBase64 = Buffer.from(secretKey, "hex").toString("base64");
-//     const secretKeyBase64Buffer = Buffer.from(secretKeyBase64, "utf-8");
-//     const secretKeyBase64BufferEncrypted = crypto.publicEncrypt(
-//         {
-//             key: pem,
-//             padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-//         },
-//         secretKeyBase64Buffer,
-//     );
+export async function generateSessionId(key: string) {
+    if (!key) throw new Error("key is required");
 
-//     return {
-//         secretKey,
-//         sessionId: secretKeyBase64BufferEncrypted.toString("base64"),
-//     };
-// }
+    console.log("key", key);
+    // Generate a random UUID and remove hyphens
+    const secretKey = randomUUID().replace(/-/g, "");
 
-// export async function decryptSecret(base64Secret: string, base64Iv: string, secretKey: string) {
-//     if (!base64Secret) throw new Error("base64Secret is required");
-//     if (!base64Iv) throw new Error("base64Iv is required");
-//     if (!secretKey || !/^[0-9A-Fa-f]+$/.test(secretKey)) {
-//         throw new Error("secretKey must be a hex string");
-//     }
+    console.log("secretKey", secretKey);
 
-//     const secret = Buffer.from(base64Secret, "base64");
-//     const iv = Buffer.from(base64Iv, "base64");
-//     const secretKeyBuffer = Buffer.from(secretKey, "hex");
+    // Convert to base64 for encryption
+    const secretKeyBase64 = Buffer.from(secretKey, "hex").toString("base64");
 
+    console.log("secretKeyBase64", secretKeyBase64);
 
-//     const cryptoKey = crypto.createDecipheriv("aes-128-gcm", secretKeyBuffer, iv);
-//     cryptoKey.setAutoPadding(false);
+    // Generate a random IV
+    const iv = CryptoES.lib.WordArray.random(16);
 
-//     const decrypted = cryptoKey.update(secret);
+    // Encrypt the secret key using AES
+    const encrypted = CryptoES.AES.encrypt(
+        secretKeyBase64,
+        key, // The encryption key
+        {
+            iv: iv,
+            mode: CryptoES.mode.CBC, // Use CBC mode as GCM is not directly available
+            padding: CryptoES.pad.Pkcs7
+        }
+    );
 
-//     return decrypted.toString("utf-8");
-// }
+    const ciphertext = encrypted.toString();
+    const ivString = iv.toString(CryptoES.enc.Hex);
+    const tag = encrypted.salt ? encrypted.salt.toString(CryptoES.enc.Hex) : "";
+
+    console.log("encrypted data", {
+        content: ciphertext,
+        iv: ivString,
+        tag: tag
+    });
+
+    return {
+        secretKey,
+        sessionId: ciphertext,
+        iv: ivString,
+        tag: tag
+    };
+}
+
+export function decryptSecret(base64Secret: string, base64Iv: string, secretKey: string) {
+    if (!base64Secret) throw new Error("base64Secret is required");
+    if (!base64Iv) throw new Error("base64Iv is required");
+    if (!secretKey || !/^[0-9A-Fa-f]+$/.test(secretKey)) {
+        throw new Error("secretKey must be a hex string");
+    }
+
+    // Convert inputs to formats needed by CryptoES
+    const secret = CryptoES.enc.Base64.parse(base64Secret);
+    const iv = CryptoES.enc.Base64.parse(base64Iv);
+    const key = CryptoES.enc.Hex.parse(secretKey);
+
+    console.log("secret", secret);
+    console.log("iv", iv);
+    console.log("key", key);
+    // Create cipher params
+    const cipherParams = CryptoES.lib.CipherParams.create({
+        ciphertext: secret
+    });
+
+    console.log("cipherParams", cipherParams);
+    // Decrypt
+    const decrypted = CryptoES.AES.decrypt(
+        cipherParams,
+        key,
+        {
+            iv: iv,
+            mode: CryptoES.mode.CBC,
+            padding: CryptoES.pad.NoPadding
+        }
+    );
+    console.log("decrypted", decrypted);
+    return decrypted.toString(CryptoES.enc.Utf8);
+}
+
+export const getJwtTokenFromInternalApi = async (
+    quartzCardUser: QuartzCardUser,
+    walletAddress: string,
+    provider: PrivyEmbeddedSolanaWalletProvider,
+) => {
+
+    console.log("walletAddress", walletAddress);
+    const message = [
+        "Sign this message to authenticate ownership. This signature will not trigger any blockchain transaction or cost any gas fees.\n",
+        `Wallet address: ${walletAddress}`,
+        `Timestamp: ${Date.now()}`
+    ].join("\n");
+
+    let signature: string;
+    try {
+        signature = await signMessageWithPrivy(provider, message);
+        console.log("signature here, find out the format it is", signature);
+        return signature;
+    } catch (error) {
+        if (error instanceof EmbeddedProviderError) {
+            return;
+        } else {
+            throw error;
+        }
+    }
+
+    console.log("signature", signature);
+
+    const acceptTandcs = TandCsNeeded.ACCEPTED;
+
+    const cardToken = await fetchAndParse(`${config.INTERNAL_API_URL}/auth/user`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            accept: 'application/json'
+        },
+        body: JSON.stringify({
+            publicKey: walletAddress,
+            signature,
+            message,
+            id: quartzCardUser?.id,
+            //change tbis so that 
+            acceptQuartzCardTerms: acceptTandcs
+        })
+    });
+
+    return cardToken as string;
+}
+
+export const signMessageWithPrivy = async (provider: PrivyEmbeddedSolanaWalletProvider, message: string) => {
+    if (!provider) throw new Error("No provider found");
+
+    console.log("message in signMessageWithPrivy", message);
+    const signatureBytes = await provider.request({
+        method: "signMessage",
+        params: {
+            message: message
+        }
+    });
+    console.log("signatureBytes in signMessageWithPrivy", signatureBytes);
+    return signatureBytes.signature;
+}
