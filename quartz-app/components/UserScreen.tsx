@@ -150,8 +150,6 @@ export const UserScreen = () => {
               </>
             )}
 
-            <Text>Wallet Balance: {walletBalance} SOL</Text>
-
             <Balances />
 
             <Assets isLoading={false} />
@@ -205,8 +203,6 @@ export const UserScreen = () => {
               />
             )}
           </View>
-
-          <Text>Welcome to Your Quartz Account</Text>
 
           <View style={{ display: "flex", flexDirection: "column" }}>
             {signedMessages.map((m) => (
