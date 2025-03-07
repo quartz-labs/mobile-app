@@ -384,7 +384,6 @@ export const getJwtTokenFromInternalApi = async (
     try {
         signature = await signMessageWithPrivy(provider, message);
         console.log("signature here, find out the format it is", signature);
-        return signature;
     } catch (error) {
         if (error instanceof EmbeddedProviderError) {
             return;
